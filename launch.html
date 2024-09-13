@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play | Glitch Arcade</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <style>
+        body {
+            background-color: #3b3b3b;
+            color: white;
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+
+        #info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+            flex-shrink: 0;
+        }
+
+        #info h3 {
+            background-color: #5d5d5d;
+            border-radius: 8px;
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 1.2rem;
+        }
+
+        #info button {
+            padding: 8px 15px;
+            background-color: transparent;
+            color: white;
+            border-radius: 8px;
+            border: 1px solid white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 1rem;
+        }
+
+        #info button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .loader {
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, red 0%, orange 25%, yellow 50%, green 75%, blue 100%);
+            background-size: 200%;
+            animation: loaderAnimation 4s linear infinite;
+        }
+
+        @keyframes loaderAnimation {
+            to {
+                background-position: 100%;
+            }
+        }
+
+        iframe {
+            background-color: white;
+            border-width: 4px;
+            flex-grow: 1;
+            width: 100%;
+            height: calc(100vh - 75px);
+            margin: 0;
+            cursor: none;
+        }
+
+        @media (max-width: 768px) {
+            #info h3 {
+                font-size: 1rem;
+                padding: 8px 15px;
+            }
+
+            #info button {
+                padding: 6px 10px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Modal Styles */
+        #controlsModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #5d5d5d;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+
+        .control-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            text-align: left;
+            color: white;
+        }
+
+        .control-item {
+            background-color: #444;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .control-item span {
+            font-weight: bold;
+        }
+
+        /* Close button */
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div id="info">
+        <button onclick="goHome()">Go Home</button>
+        <h3 id="game_title">Super Unloaded Name Brothers</h3>
+        <button onclick="openControls()">Controls</button>
+    </div>
+
+    <div class="loader"></div>
+
+    <iframe id="gameFrame" style="cursor: none;"></iframe>
+
+    <!-- Modal for Controls -->
+    <div id="controlsModal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeControls()">&times;</span>
+            <h2>Gamepad to Keyboard Control Mapping</h2>
+            <div class="control-list">
+                <div class="control-item"><span>Left Trigger (L)</span>: R</div>
+                <div class="control-item"><span>Right Trigger (R)</span>: O</div>
+                <div class="control-item"><span>Left Shoulder (L)</span>: E</div>
+                <div class="control-item"><span>Right Shoulder (R)</span>: P</div>
+                <div class="control-item"><span>D-Pad Up</span>: Arrow Up</div>
+                <div class="control-item"><span>D-Pad Left</span>: Arrow Left</div>
+                <div class="control-item"><span>D-Pad Down</span>: Arrow Down</div>
+                <div class="control-item"><span>D-Pad Right</span>: Arrow Right</div>
+                <div class="control-item"><span>Left Analog Up</span>: W</div>
+                <div class="control-item"><span>Left Analog Left</span>: A</div>
+                <div class="control-item"><span>Left Analog Down</span>: S</div>
+                <div class="control-item"><span>Left Analog Right</span>: D</div>
+                <div class="control-item"><span>Left Thumb</span>: X</div>
+                <div class="control-item"><span>Right Analog Up</span>: I</div>
+                <div class="control-item"><span>Right Analog Left</span>: J</div>
+                <div class="control-item"><span>Right Analog Down</span>: K</div>
+                <div class="control-item"><span>Right Analog Right</span>: L</div>
+                <div class="control-item"><span>Right Thumb</span>: , (comma)</div>
+                <div class="control-item"><span>Button X</span>: Y</div>
+                <div class="control-item"><span>Button Square</span>: T</div>
+                <div class="control-item"><span>Button Triangle</span>: U</div>
+                <div class="control-item"><span>Button Circle</span>: H</div>
+                <div class="control-item"><span>Button Cross</span>: G</div>
+                <div class="control-item"><span>Select</span>: Space</div>
+                <div class="control-item"><span>Start</span>: Enter</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const gameTitle = document.getElementById("game_title");
+        const iframe = document.getElementById("gameFrame");
+        const controlsModal = document.getElementById("controlsModal");
+
+        const urlParams = new URLSearchParams(window.location.search);
+
+        if (urlParams.has("url") && urlParams.has("title")) {
+            const gameUrl = urlParams.get("url");
+            const gameName = urlParams.get("title").replace(/%20/g, " ");
+            gameTitle.textContent = gameName;
+            iframe.src = gameUrl;
+        }
+
+        function goHome() {
+            window.location.href = 'index.html';
+        }
+
+        function openControls() {
+            controlsModal.style.display = "flex";
+        }
+
+        function closeControls() {
+            controlsModal.style.display = "none";
+        }
+
+        // Close modal when clicking outside the modal content
+        window.onclick = function(event) {
+            if (event.target == controlsModal) {
+                controlsModal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+
+</html>

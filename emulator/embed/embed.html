@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Example webretro embed</title>
+		<style>
+			body {
+				background-color: black;
+			}
+			#webretro-container {
+				width: 100%;
+				height: calc(100% + 100px);
+				position: fixed;
+				bottom: 0px;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Example webretro embed</h1>
+		<div id="webretro-container"></div>
+		<br>
+		<br>
+		<br>
+		
+		<script type="text/javascript" src="embed.js"></script>
+		<script>
+			function getURLParam(name) {
+				var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+				return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+			}
+
+			system = getURLParam("system");
+
+			if (getURLParam("ss")){
+				system2 = getURLParam("ss");
+			}
+
+			system_index = {
+				"nes": ".nes.zip",
+				"gameboy": ".gb",
+				"n64": ".z64",
+				"ds": ".nds",
+			}
+
+			var frame = webretroEmbed(document.getElementById("webretro-container"), "../", {system: getURLParam("system"), rom: "../../../" + getURLParam("game") + (system_index[system] ? system_index[system] : system_index[system2])});
+		</script>
+	</body>
+</html>

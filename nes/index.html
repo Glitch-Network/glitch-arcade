@@ -1,0 +1,10 @@
+<script>
+    						function get_url_param(param){
+							// get url parameter
+
+							var urlParams = new URLSearchParams(window.location.search);
+							return urlParams.get(param);
+
+						}
+    window.location.href = "../emulator/embed/embed.html?system=nes&game=" + "nes/roms/" + get_url_param("game") 
+</script>>
